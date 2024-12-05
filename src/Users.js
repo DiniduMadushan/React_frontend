@@ -9,6 +9,8 @@ const Users = () => {
 
     const [users, setUsers] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+    const [selectedUser, setSelectedUser] = useState({});
+    const [isEdit, setIsEdit] = useState(false);
 
     useEffect(()=>{
         getUsers();
@@ -36,6 +38,7 @@ const Users = () => {
              .then(() => {
                 getUsers();
                 setSubmitted(false);
+                setIsEdit("false");
              }).catch(error => {
                 console.log("Error in axios.post : ",error);
                 
@@ -43,12 +46,56 @@ const Users = () => {
 
     }
 
+    const updateUser = data => {
+        setSubmitted(true);
+
+        const payload = {
+            id : data.id,
+            name : data.name
+        }
+
+        Axios.put('http://localhost:3001/api/updateuser', payload)
+             .then(()=>{
+                getUsers();
+                setSubmitted(false);
+             }).catch(error=>{
+                console.log("Error at updateuser: ",error);
+             })
+    }
+
+    const deleteUser = data => {
+        console.log(data);
+        
+        Axios.delete('http://localhost:3001/api/deleteuser', data)
+             .then(()=>{
+                getUsers();
+             }).catch(error=>{
+                console.log("Error at deleteUser: ",error);
+             })
+    }
+
 
     return(
 
         <Box>
-            <UserForm addUser={addUser} submitted = {submitted}/>
-            <UserTable rows={users} />
+            <UserForm
+             addUser={addUser} 
+             updateUser = {updateUser}
+             submitted = {submitted}
+             data = {selectedUser}
+             isEdit={isEdit}   
+             />
+
+            <UserTable
+             rows={users} 
+             selectedUser = {data=>{
+                setSelectedUser(data);
+                setIsEdit(true);
+            }}
+
+            deleteUser = {data => window.confirm('Are you sure want to delete?') && deleteUser(data)}
+            
+             />
         </Box>
 
     );

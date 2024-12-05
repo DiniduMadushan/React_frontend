@@ -1,65 +1,120 @@
-import {Button, Grid, Input, Typography} from "@mui/material"
-import { useEffect, useState } from "react"
+import { Button, Grid, Input, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
-const UserForm = ({addUser,submitted}) => {
+const UserForm = ({ addUser, updateUser, submitted, data, isEdit }) => {
+    const [id, setid] = useState(0);
+    const [name, setName] = useState("");
 
-    const [id,setid] = useState(0);
-    const [name,setName] = useState("");
-
-    useEffect(()=> {
-        if(!submitted){
+    useEffect(() => {
+        if (!submitted) {
             setid(0);
             setName("");
         }
-    },[submitted]);
+    }, [submitted]);
 
-    return(
+    useEffect(() => {
+        if (data?.id && data.id !== 0) {
+            setid(data.id);
+            setName(data.name);
+        }
+    }, [data]);
 
-        <Grid container spacing={2} sx={{backgroundColor : '#ffffff', marginBottom: '30px', display: 'block'}}>
+    return (
+        <Grid
+            container
+            spacing={2}
+            sx={{
+                backgroundColor: '#ffffff',
+                padding: '20px',
+                border: '1px solid #ddd', // Added border
+                borderRadius: '8px', // Rounded corners
+                width: '50%', // Fixed width for form
+                margin: '20px auto', // Center form horizontally
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Optional shadow for better visuals
+            }}
+        >
+            {/* Heading */}
             <Grid item xs={12}>
-                <Typography component={'h1'} sx={{color:'#ffffff'}}>User form</Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={6} sx={{display:'flex'}}>
-                <Typography component={'label'} htmlFor="id" sx={{color:'#000000', marginRight:'20px', fontSize:'16px', width:'100px', display:'block'}}>
-                    Id
-                </Typography>
-
-                <Input type="number" id="id" name="id" sx={{width:'400px'}} value={id} onChange={e=>setid(e.target.value)}/>
-
-            </Grid>
-
-            <Grid item xs={12} sm={6} sx={{display:'flex'}}>
-                <Typography component={'label'} htmlFor="name" sx={{color:'#000000', marginRight:'20px', fontSize:'16px', width:'100px', display:'block'}}>
-                    Name
-                </Typography>
-
-                <Input type="text" id="name" name="name" sx={{width:'400px'}} value={name} onChange={e=>setName(e.target.value)}/>
-
-            </Grid>
-
-            <Button 
-            
-                sx={{
-                        margin:'auto',
-                        marginBottom:'20px',
-                        backgroundColor:'#00c6e6',
-                        color:'#000000',
-                        marginLeft:'15px',
-                        marginTop:'20px',
-                        '&:hover':{opacity:'0.7',backgroundColor:'#00c6e6'}
+                <Typography
+                    component="h1"
+                    variant="h5"
+                    sx={{
+                        color: '#333',
+                        textAlign: 'center',
+                        marginBottom: '20px',
+                        fontWeight: 'bold',
                     }}
-                    
-                onClick={()=>addUser({id,name})}
+                >
+                    User Data
+                </Typography>
+            </Grid>
 
-                    >  
+            {/* ID Field */}
+            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography
+                    component="label"
+                    htmlFor="id"
+                    sx={{
+                        color: '#333',
+                        marginRight: '20px',
+                        fontSize: '16px',
+                        width: '100px',
+                        textAlign: 'right',
+                    }}
+                >
+                    Id :
+                </Typography>
+                <Input
+                    type="number"
+                    id="id"
+                    name="id"
+                    sx={{ width: '300px' }}
+                    value={id}
+                    onChange={(e) => setid(e.target.value)}
+                />
+            </Grid>
 
-                    Add
+            {/* Name Field */}
+            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography
+                    component="label"
+                    htmlFor="name"
+                    sx={{
+                        color: '#333',
+                        marginRight: '20px',
+                        fontSize: '16px',
+                        width: '100px',
+                        textAlign: 'right',
+                    }}
+                >
+                    Name : 
+                </Typography>
+                <Input
+                    type="text"
+                    id="name"
+                    name="name"
+                    sx={{ width: '300px' }}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+            </Grid>
 
-            </Button>
-
+            {/* Add/Edit Button */}
+            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                <Button
+                    sx={{
+                        backgroundColor: '#00c6e6',
+                        color: '#fff',
+                        padding: '10px 20px',
+                        '&:hover': { opacity: '0.9', backgroundColor: '#00c6e6' },
+                    }}
+                    onClick={() => (isEdit ? updateUser({ id, name }) : addUser({ id, name }))}
+                >
+                    {isEdit ? 'Edit' : 'Add'}
+                </Button>
+            </Grid>
         </Grid>
+    );
+};
 
-    )
-}
-export default UserForm
+export default UserForm;
